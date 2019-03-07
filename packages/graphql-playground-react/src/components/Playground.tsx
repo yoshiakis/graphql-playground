@@ -156,6 +156,10 @@ export class Playground extends React.PureComponent<Props & ReduxProps, State> {
       let first = true
       if (this.backoff) {
         this.backoff.stop()
+        this.backoff = null
+      }
+      if (!props.settings['schema.fetching']) {
+        return
       }
       this.backoff = new Backoff(async () => {
         if (first) {
@@ -171,7 +175,7 @@ export class Playground extends React.PureComponent<Props & ReduxProps, State> {
     { trailing: true }, // important to not miss the last call
   ) as any
 
-  private backoff: Backoff
+  private backoff: Backoff | null
   private initialIndex: number = -1
   private mounted = false
   private initialSchemaFetch = true
@@ -280,7 +284,7 @@ export class Playground extends React.PureComponent<Props & ReduxProps, State> {
           )
           this.initialSchemaFetch = false
         }
-        this.backoff.stop()
+        ;(this.backoff as Backoff).stop()
       }
     } catch (e) {
       // tslint:disable-next-line
