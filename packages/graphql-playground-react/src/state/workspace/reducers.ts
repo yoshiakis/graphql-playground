@@ -16,7 +16,6 @@ import { immutableMemoize } from '../../components/Playground/util/immutableMemo
 import { createSelector } from 'reselect'
 import { deserializePersistedState } from './deserialize'
 import appHistory, { AppHistory } from '../appHistory/reducers'
-// import { createSelector } from 'reselect'
 
 import { ISettings } from '../../types'
 
