@@ -70,6 +70,7 @@ These are the settings currently available:
   'prettier.tabWidth': 2,
   'prettier.useTabs': false,
   'request.credentials': 'omit', // possible values: 'omit', 'include', 'same-origin'
+  'schema.fetching': true, // fetching or not schema
   'schema.polling.enable': true, // enables automatic schema polling
   'schema.polling.endpointFilter': '*localhost*', // endpoint filter for schema polling
   'schema.polling.interval': 2000, // schema polling interval in ms
@@ -103,6 +104,7 @@ interface ISettings {
   'prettier.tabWidth': number
   'prettier.useTabs': boolean
   'request.credentials': 'omit' | 'include' | 'same-origin'
+  'schema.fetching': boolean
   'schema.polling.enable': boolean
   'schema.polling.endpointFilter': string
   'schema.polling.interval': number
