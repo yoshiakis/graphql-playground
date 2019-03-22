@@ -49,6 +49,7 @@ import {
   getOperationName,
   getHeadersCount,
   getSelectedSessionIdFromRoot,
+  getQuery,
 } from '../../state/sessions/selectors'
 import {
   updateQueryFacts,
@@ -64,6 +65,7 @@ import {
   setEditorFlex,
   toggleVariables,
   fetchSchema,
+  runQuery,
 } from '../../state/sessions/actions'
 import { ResponseRecord } from '../../state/sessions/reducers'
 
@@ -94,6 +96,7 @@ export interface ReduxProps {
   toggleVariables: () => void
   setEditorFlex: (flex: number) => void
   stopQuery: (sessionId: string) => void
+  runQuery: (query: any, operationName?: string) => void
   navStack: any[]
   // sesion props
   queryRunning: boolean
@@ -237,7 +240,11 @@ class GraphQLEditor extends React.PureComponent<Props & ReduxProps> {
             </QueryWrap>
             <ResultWrap>
               <ResultDragBar ref={this.setResponseResizer} />
-              <ExecuteButton />
+              <ExecuteButton
+                onClick={this.handleExecuteBtnClick}
+                onOptionSelected={this.handleOptionSelected}
+                queryRunning={this.props.queryRunning}
+              />
               {this.props.queryRunning &&
                 this.props.responses.size === 0 && <Spinner />}
               <Results setRef={this.setResultComponent} />
@@ -565,6 +572,24 @@ class GraphQLEditor extends React.PureComponent<Props & ReduxProps> {
       }
     }
   }
+
+  private handleExecuteBtnClick = () => {
+    if (this.props.queryRunning) {
+      this.props.stopQuery(this.props.sessionId)
+    } else {
+      const editedQuery = this.autoCompleteLeafs() || this.props.query
+      this.props.runQuery(undefined, editedQuery)
+    }
+  }
+
+  private handleOptionSelected = operationName => {
+    if (this.props.queryRunning) {
+      this.props.stopQuery(this.props.sessionId)
+    } else {
+      const editedQuery = this.autoCompleteLeafs() || this.props.query
+      this.props.runQuery(operationName, editedQuery)
+    }
+  }
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -586,6 +611,7 @@ const mapStateToProps = createStructuredSelector({
   operationName: getOperationName,
   headersCount: getHeadersCount,
   sessionId: getSelectedSessionIdFromRoot,
+  query: getQuery,
 })
 
 export default // TODO fix redux types
@@ -605,6 +631,7 @@ connect<any, any, any>(
     setEditorFlex,
     toggleVariables,
     fetchSchema,
+    runQuery,
   },
   null,
   {

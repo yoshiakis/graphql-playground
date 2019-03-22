@@ -10,19 +10,20 @@ import * as React from 'react'
 import ExecuteButtonOperation from './ExecuteButtonOperation'
 import { styled } from '../../styled'
 import { connect } from 'react-redux'
-import { runQuery, stopQuery } from '../../state/sessions/actions'
 import { createStructuredSelector } from 'reselect'
 import {
-  getQueryRunning,
   getOperations,
   getSelectedSessionIdFromRoot,
 } from '../../state/sessions/selectors'
 import { toJS } from './util/toJS'
 
-export interface ReduxProps {
-  runQuery: (operationName?: string) => void
-  stopQuery: (sessionId: string) => void
+export interface Props {
+  onClick: (e: Event) => void
+  onOptionSelected: (operationName?: string) => void
   queryRunning: boolean
+}
+
+export interface ReduxProps {
   operations: any[]
   sessionId: string
 }
@@ -40,7 +41,7 @@ let firstTime = true
  * What a nice round shiny button. Shows a drop-down when there are multiple
  * queries to run.
  */
-class ExecuteButton extends React.Component<ReduxProps, State> {
+class ExecuteButton extends React.Component<Props & ReduxProps, State> {
   constructor(props) {
     super(props)
 
@@ -80,7 +81,7 @@ class ExecuteButton extends React.Component<ReduxProps, State> {
     // for which operation to run.
     let onClick
     if (this.props.queryRunning || !hasOptions) {
-      onClick = this.onClick
+      onClick = this.props.onClick
     }
 
     // Allow mouse down if there is no running query, there are options for
@@ -129,20 +130,12 @@ class ExecuteButton extends React.Component<ReduxProps, State> {
     this.onOptionSelected(operation)
   }
 
-  private onClick = () => {
-    if (this.props.queryRunning) {
-      this.props.stopQuery(this.props.sessionId)
-    } else {
-      this.props.runQuery()
-    }
-  }
-
   private onOptionSelected = operation => {
     this.setState({ optionsOpen: false } as State)
     if (!operation) {
       return
     }
-    this.props.runQuery(operation.name && operation.name.value)
+    this.props.onOptionSelected(operation.name && operation.name.value)
   }
 
   private onOptionsOpen = downEvent => {
@@ -182,15 +175,11 @@ class ExecuteButton extends React.Component<ReduxProps, State> {
 }
 
 const mapStateToProps = createStructuredSelector({
-  queryRunning: getQueryRunning,
   operations: getOperations,
   sessionId: getSelectedSessionIdFromRoot,
 })
 
-export default connect(
-  mapStateToProps,
-  { runQuery, stopQuery },
-)(toJS(ExecuteButton))
+export default connect(mapStateToProps)(toJS(ExecuteButton))
 
 const Wrapper = styled.div`
   position: absolute;

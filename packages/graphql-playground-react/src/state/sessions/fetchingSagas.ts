@@ -109,11 +109,11 @@ const subscriptions = {}
 
 function* runQuerySaga(action) {
   // run the query
-  const { operationName } = action.payload
+  const { operationName, query } = action.payload
   const selectedWorkspaceId = yield select(getSelectedWorkspaceId)
   const session: Session = yield select(getSelectedSession)
   const request = {
-    query: session.query,
+    query,
     operationName,
     variables: getParsedVariablesFromSession(session),
   }

@@ -158,7 +158,7 @@ export const {
   GraphQLEditor.renewStacks()
   */
 
-  RUN_QUERY: operationName => ({ operationName }),
+  RUN_QUERY: (operationName, query) => ({ operationName, query }),
   QUERY_SUCCESS: simpleAction(),
   QUERY_ERROR: simpleAction(),
   RUN_QUERY_AT_POSITION: position => ({ position }),
